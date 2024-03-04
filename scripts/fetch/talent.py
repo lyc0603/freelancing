@@ -5,14 +5,17 @@ Script to fetch talent data from the API
 import json
 import re
 
+import pymongo
 from bs4 import BeautifulSoup
+from pymongo.collection import Collection
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from tqdm import tqdm
 
-from environ.constants import HEADERS, PASSWORD, USERNAME, WEBDRIVER_PATH
+from environ.constants import (CATEGORY_DICT, HEADERS, PASSWORD, USERNAME,
+                               WEBDRIVER_PATH)
 
 
 def implicit_wait(driver, xpath:str) -> None:
@@ -47,16 +50,26 @@ def login(driver, username: str, password:str) -> None:
     # wait until botton is visible
     implicit_wait(driver, "//div[@id='user-top-navigation-container']")
 
+# initialize the mongodb client
+client = pymongo.MongoClient("mongodb://localhost:27017/")
+db = client.upwork
+
 # get the chrome driver from the path
 service = Service(executable_path=f"{WEBDRIVER_PATH}/chromedriver")
 options = webdriver.ChromeOptions()
-# options.add_argument("--headless")
-# options.add_argument("--window-size=1920,1080")
+options.add_argument("--headless")
+options.add_argument("--window-size=1920,1080")
 options.add_argument(f'user-agent={HEADERS["User-Agent"]}')
 driver = webdriver.Chrome(service=service, options=options)
-driver.maximize_window()
+# driver.maximize_window()
 
-url = f"https://www.upwork.com/nx/search/talent/?category_uid=531770282580668418&subcategory_uid=531770282584862733" 
+category_name = list(CATEGORY_DICT.keys())[0]
+category_id = CATEGORY_DICT["Web, Mobile \u0026 Software Dev"]
+
+collection = db[category_id]
+collection.create_index([("talent_id", pymongo.TEXT)], unique=True)
+
+url = f"https://www.upwork.com/nx/search/talent/?category_uid={category_id}" 
 driver.get(url)
 
 login(driver, USERNAME, PASSWORD)
@@ -68,7 +81,7 @@ match = re.search(r'of (\d+)', Page_max_info)
 max_page_number = int(match.group(1))
 
 for page_num in tqdm(range(1, max_page_number + 1)):
-    url = f"https://www.upwork.com/nx/search/talent/?category_uid=531770282580668418&subcategory_uid=531770282584862733&page={page_num}" 
+    url = f"https://www.upwork.com/nx/search/talent/?category_uid={category_id}&page={page_num}" 
 
     driver.get(url)
     talent_page = BeautifulSoup(driver.page_source, "html.parser")
@@ -85,6 +98,7 @@ for page_num in tqdm(range(1, max_page_number + 1)):
         details = driver.page_source
         talent_details = json.loads(driver.find_element(By.TAG_NAME, 'pre').text)
 
+        talent_data["talent_id"] = talent_id
         talent_data["details"] = talent_details
 
         talent_identity_uid = talent_details["profile"]["identity"]["uid"]
@@ -114,5 +128,7 @@ for page_num in tqdm(range(1, max_page_number + 1)):
                 occp_page_num += 1
                 total_items = job_completed["totalItems"]
                 print(talent_id, prefLabel, occp_page_num * 10, total_items)
+
+        collection.insert_one(talent_data)
 
         break

@@ -8,9 +8,9 @@ FIGURE_PATH = PROJECT_ROOT / "figures"
 PROCESSED_DATA_PATH = PROJECT_ROOT / "processed_data"
 WEBDRIVER_PATH = PROJECT_ROOT / "webdriver"
 
-# Upwork password
-USERNAME = "ucesy34@ucl.ac.uk"
-PASSWORD = "Luoyichen110110!!"
+# # Upwork password
+# USERNAME = "ucesy34@ucl.ac.uk"
+# PASSWORD = "Luoyichen110110!!"
 
 # Headers
 HEADERS = {
@@ -18,7 +18,7 @@ HEADERS = {
 }
 
 # Categories
-CATEGORY_DICT ={
+CATEGORY_DICT = {
     "Web, Mobile \u0026 Software Dev":"531770282580668418",
     "Data Science \u0026 Analytics":"531770282580668420",
     "Design \u0026 Creative":"531770282580668421",
@@ -32,3 +32,56 @@ CATEGORY_DICT ={
     "IT \u0026 Networking":"531770282580668419",
     "Legal":"531770282584862723",
 }
+
+# Crawling accounts
+
+ACCT_DICT = [
+    {
+        "username": "ucesy01@outlook.com",
+        "password": "Luoyichen110110!!",
+    },
+    {
+        "username": "ucesy02@outlook.com",
+        "password": "Luoyichen110110!!",
+    },
+    {
+        "username": "ucesy03@outlook.com",
+        "password": "Luoyichen110110!!",
+    },
+    {
+        "username": "ucesy04@proton.me",
+        "password": "Luoyichen110110!!",
+    },
+    {
+        "username": "ucesy05@proton.me",
+        "password": "Luoyichen110110!!",
+    },
+    {
+        "username": "ucesy06proton.me@proton.me",
+        "password": "Luoyichen110110!!",
+    },
+    {
+        "username": "ucesy07@proton.me",
+        "password": "Luoyichen110110!!",
+    },
+    {
+        "username": "ucesy08@proton.me",
+        "password": "Luoyichen110110!!",
+    },
+    {
+        "username": "ucesy09@proton.me",
+        "password": "Luoyichen110110!!",
+    },
+    {
+        "username": "ucesy10@proton.me",
+        "password": "Luoyichen110110!!",
+    },
+    {
+        "username": "ucesy11@proton.me",
+        "password": "Luoyichen110110!!",
+    },
+    {
+        "username": "869417783@qq.com",
+        "password": "Luoyichen110110!!",
+    },
+]
